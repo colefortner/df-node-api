@@ -5,8 +5,8 @@ const businessesRoutes = require("./routes/businesses-routes");
 
 const app = express();
 
-app.use(businessesRoutes);
+app.use("/api/businesses", businessesRoutes);
 
 app.listen(5050, () => {
-  console.log("Serving on port 5000");
+  console.log("Serving on port 5050");
 });
