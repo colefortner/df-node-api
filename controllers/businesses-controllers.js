@@ -30,5 +30,24 @@ const createBusiness = (req, res, next) => {
   res.status(201).json({ business: createdBusiness });
 };
 
+const updateBusiness = (req, res, next) => {
+  const { name, description } = req.body;
+  const businessId = req.params.id;
+  const updatedBusiness = {
+    ...businesses_data.find((b) => b.id === businessId)
+  };
+  const businessIndex = businesses_data.findIndex((b) => b.id === businessId);
+  updatedBusiness.name = name;
+  updatedBusiness.description = description;
+
+  businesses_data[businessIndex] = updatedBusiness;
+
+  res.status(200).json({ business: updatedBusiness });
+};
+
+const deleteBusiness = (req, res, next) => {};
+
 exports.getBusinessById = getBusinessById;
 exports.createBusiness = createBusiness;
+exports.updateBusiness = updateBusiness;
+exports.deleteBusiness = deleteBusiness;
