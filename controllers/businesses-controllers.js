@@ -11,4 +11,18 @@ const getBusinessById = (req, res, next) => {
   res.json({ business });
 };
 
+const createBusiness = (req, res, next) => {
+  const { id, name, description } = req.body;
+
+  const createdBusiness = {
+    id,
+    name,
+    description
+  };
+  businesses_data.push(createdBusiness);
+
+  res.status(201).json({ business: createdBusiness });
+};
+
 exports.getBusinessById = getBusinessById;
+exports.createBusiness = createBusiness;

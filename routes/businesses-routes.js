@@ -6,4 +6,6 @@ const router = express.Router();
 
 router.get("/:id", buisnessesControllers.getBusinessById);
 
+router.post("/", buisnessesControllers.createBusiness);
+
 module.exports = router;

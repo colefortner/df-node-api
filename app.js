@@ -5,6 +5,8 @@ const businessesRoutes = require("./routes/businesses-routes");
 
 const app = express();
 
+app.use(bodyParser.json());
+
 app.use("/api/businesses", businessesRoutes);
 
 app.listen(5050, () => {
