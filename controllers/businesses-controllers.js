@@ -1,3 +1,5 @@
+const { v4: uuid } = require("uuid");
+
 const businesses_data = [
   { id: "1", name: "Pinellas Ale House", description: "bar" },
   { id: "2", name: "Three Daughters Brewing", description: "bar" }
@@ -15,7 +17,7 @@ const createBusiness = (req, res, next) => {
   const { id, name, description } = req.body;
 
   const createdBusiness = {
-    id,
+    id: uuid(),
     name,
     description
   };
