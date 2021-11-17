@@ -1,5 +1,7 @@
 const express = require("express");
 
+const HttpError = require("../models/http-error");
+
 const buisnessesControllers = require("../controllers/businesses-controllers");
 
 const router = express.Router();

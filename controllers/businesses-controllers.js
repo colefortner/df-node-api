@@ -1,4 +1,5 @@
 const { v4: uuid } = require("uuid");
+const HttpError = require("../models/http-error");
 
 const businesses_data = [
   { id: "1", name: "Pinellas Ale House", description: "bar" },
@@ -10,6 +11,9 @@ const getBusinessById = (req, res, next) => {
   const business = businesses_data.find((b) => {
     return b.id === businessId;
   });
+  if (!business) {
+    throw new HttpError("Could not find a business for this id", 404);
+  }
   res.json({ business });
 };
 
