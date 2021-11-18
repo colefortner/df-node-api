@@ -1,7 +1,7 @@
 const { v4: uuid } = require("uuid");
 const HttpError = require("../models/http-error");
 
-const businesses_data = [
+let businesses_data = [
   { id: "1", name: "Pinellas Ale House", description: "bar" },
   { id: "2", name: "Three Daughters Brewing", description: "bar" }
 ];
@@ -45,7 +45,12 @@ const updateBusiness = (req, res, next) => {
   res.status(200).json({ business: updatedBusiness });
 };
 
-const deleteBusiness = (req, res, next) => {};
+const deleteBusiness = (req, res, next) => {
+  const businessId = req.params.id;
+
+  businesses_data = businesses_data.filter((b) => b.id !== businessId);
+  res.status(200).json({ message: "Deleted business" });
+};
 
 exports.getBusinessById = getBusinessById;
 exports.createBusiness = createBusiness;
