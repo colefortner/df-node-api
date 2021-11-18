@@ -8,6 +8,8 @@ const router = express.Router();
 
 router.get("/:id", buisnessesControllers.getBusinessById);
 
+router.get("/user/:uid", buisnessesControllers.getBusinessesByUserId);
+
 router.post("/", buisnessesControllers.createBusiness);
 
 router.patch("/:id", buisnessesControllers.updateBusiness);

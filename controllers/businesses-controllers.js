@@ -2,8 +2,8 @@ const { v4: uuid } = require("uuid");
 const HttpError = require("../models/http-error");
 
 let businesses_data = [
-  { id: "1", name: "Pinellas Ale House", description: "bar" },
-  { id: "2", name: "Three Daughters Brewing", description: "bar" }
+  { id: "1", name: "Pinellas Ale House", description: "bar", creator: "2" },
+  { id: "2", name: "Three Daughters Brewing", description: "bar", creator: "2" }
 ];
 
 const getBusinessById = (req, res, next) => {
@@ -17,13 +17,28 @@ const getBusinessById = (req, res, next) => {
   res.json({ business });
 };
 
+const getBusinessesByUserId = (req, res, next) => {
+  const userId = req.params.uid;
+
+  const businesses = businesses_data.filter((b) => b.creator === userId);
+
+  if (!businesses || businesses.length === 0) {
+    throw new HttpError(
+      "Could not find any businesses for the provided user id.",
+      404
+    );
+  }
+  res.json({ businesses });
+};
+
 const createBusiness = (req, res, next) => {
   const { id, name, description } = req.body;
 
   const createdBusiness = {
     id: uuid(),
     name,
-    description
+    description,
+    creator
   };
   businesses_data.push(createdBusiness);
 
@@ -53,6 +68,7 @@ const deleteBusiness = (req, res, next) => {
 };
 
 exports.getBusinessById = getBusinessById;
+exports.getBusinessesByUserId = getBusinessesByUserId;
 exports.createBusiness = createBusiness;
 exports.updateBusiness = updateBusiness;
 exports.deleteBusiness = deleteBusiness;
