@@ -1,4 +1,6 @@
 const { v4: uuid } = require("uuid");
+const { validationResult } = require("express-validator");
+
 const HttpError = require("../models/http-error");
 
 let businesses_data = [
@@ -32,7 +34,13 @@ const getBusinessesByUserId = (req, res, next) => {
 };
 
 const createBusiness = (req, res, next) => {
-  const { id, name, description } = req.body;
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    console.log(errors);
+    throw new HttpError("Invalid input", 422);
+  }
+
+  const { id, name, description, creator } = req.body;
 
   const createdBusiness = {
     id: uuid(),
@@ -46,6 +54,12 @@ const createBusiness = (req, res, next) => {
 };
 
 const updateBusiness = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    console.log(errors);
+    throw new HttpError("Invalid input", 422);
+  }
+
   const { name, description } = req.body;
   const businessId = req.params.id;
   const updatedBusiness = {
@@ -62,7 +76,10 @@ const updateBusiness = (req, res, next) => {
 
 const deleteBusiness = (req, res, next) => {
   const businessId = req.params.id;
-
+  // check to see if we have a place before we try to delete it
+  if (!businesses_data.find((b) => b.id === businessId)) {
+    throw new HttpError("No Business with that id", 404);
+  }
   businesses_data = businesses_data.filter((b) => b.id !== businessId);
   res.status(200).json({ message: "Deleted business" });
 };
