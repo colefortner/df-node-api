@@ -3,6 +3,7 @@ const { validationResult } = require("express-validator");
 
 const HttpError = require("../models/http-error");
 const getCoordinatesFromAddress = require("../util/location");
+const Business = require("../models/business");
 
 let businesses_data = [
   {
@@ -63,15 +64,22 @@ const createBusiness = async (req, res, next) => {
     return next(error);
   }
 
-  const createdBusiness = {
-    id: uuid(),
+  const createdBusiness = new Business({
     name,
     description,
-    location: coordinates,
     address,
+    location: coordinates,
+    image:
+      "https://i2-prod.ok.co.uk/incoming/article23299695.ece/ALTERNATES/s1200c/4_GettyImages-1228924141.jpg",
     creator
-  };
-  businesses_data.push(createdBusiness);
+  });
+
+  try {
+    await createdBusiness.save();
+  } catch (err) {
+    const error = new HttpError("Creating Business Failed", 500);
+    return next(error);
+  }
 
   res.status(201).json({ business: createdBusiness });
 };

@@ -1,5 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const mongoose = require("mongoose");
 
 const businessesRoutes = require("./routes/businesses-routes");
 const usersRoutes = require("./routes/users-routes");
@@ -26,6 +27,15 @@ app.use((error, req, res, next) => {
   res.json({ message: error.message || "An unknown error occurred!" });
 });
 
-app.listen(5050, () => {
-  console.log("Serving on port 5050");
-});
+mongoose
+  .connect(
+    "mongodb+srv://colefortner:colefortner@cluster0.psdhm.mongodb.net/dogfriendly?retryWrites=true&w=majority"
+  )
+  .then(() => {
+    app.listen(5050, () => {
+      console.log("Serving on port 5050");
+    });
+  })
+  .catch((err) => {
+    console.log(err);
+  });
