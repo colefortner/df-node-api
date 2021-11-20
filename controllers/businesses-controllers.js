@@ -22,15 +22,23 @@ let businesses_data = [
   }
 ];
 
-const getBusinessById = (req, res, next) => {
+const getBusinessById = async (req, res, next) => {
   const businessId = req.params.id;
-  const business = businesses_data.find((b) => {
-    return b.id === businessId;
-  });
-  if (!business) {
-    throw new HttpError("Could not find a business for this id", 404);
+
+  let business;
+
+  try {
+    business = await Business.findById(businessId);
+  } catch (err) {
+    const error = new HttpError("Can not find business with that id", 500);
+    return next(error);
   }
-  res.json({ business });
+
+  if (!business) {
+    const error = new HttpError("Could not find a business for this id", 404);
+    return next(error);
+  }
+  res.json({ business: business.toObject({ getters: true }) });
 };
 
 const getBusinessesByUserId = (req, res, next) => {
