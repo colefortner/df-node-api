@@ -2,10 +2,23 @@ const { v4: uuid } = require("uuid");
 const { validationResult } = require("express-validator");
 
 const HttpError = require("../models/http-error");
+const getCoordinatesFromAddress = require("../util/location");
 
 let businesses_data = [
-  { id: "1", name: "Pinellas Ale House", description: "bar", creator: "2" },
-  { id: "2", name: "Three Daughters Brewing", description: "bar", creator: "2" }
+  {
+    id: "1",
+    name: "Pinellas Ale House",
+    description: "bar",
+    address: "1962 1st Avenue S St. Petersburg, FL 33712",
+    creator: "2"
+  },
+  {
+    id: "2",
+    name: "Three Daughters Brewing",
+    description: "bar",
+    address: "222 22nd Street South, St. Petersburg, FL 33712",
+    creator: "2"
+  }
 ];
 
 const getBusinessById = (req, res, next) => {
@@ -33,19 +46,29 @@ const getBusinessesByUserId = (req, res, next) => {
   res.json({ businesses });
 };
 
-const createBusiness = (req, res, next) => {
+const createBusiness = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     console.log(errors);
-    throw new HttpError("Invalid input", 422);
+    return next(new HttpError("Invalid input", 422));
   }
 
-  const { id, name, description, creator } = req.body;
+  const { id, name, description, address, creator } = req.body;
+
+  let coordinates;
+
+  try {
+    coordinates = await getCoordinatesFromAddress(address);
+  } catch (error) {
+    return next(error);
+  }
 
   const createdBusiness = {
     id: uuid(),
     name,
     description,
+    location: coordinates,
+    address,
     creator
   };
   businesses_data.push(createdBusiness);
