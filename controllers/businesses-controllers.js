@@ -135,13 +135,24 @@ const updateBusiness = async (req, res, next) => {
   res.status(200).json({ business: business.toObject({ getters: true }) });
 };
 
-const deleteBusiness = (req, res, next) => {
+const deleteBusiness = async (req, res, next) => {
   const businessId = req.params.id;
-  // check to see if we have a place before we try to delete it
-  if (!businesses_data.find((b) => b.id === businessId)) {
-    throw new HttpError("No Business with that id", 404);
+
+  let business;
+
+  try {
+    business = await Business.findById(businessId);
+  } catch (err) {
+    const error = new HttpError("Cannot find business with that id", 500);
+    return next(error);
   }
-  businesses_data = businesses_data.filter((b) => b.id !== businessId);
+
+  try {
+    await business.remove();
+  } catch (err) {
+    const error = new HttpError("Could not remove business", 500);
+    return next(error);
+  }
   res.status(200).json({ message: "Deleted business" });
 };
 
