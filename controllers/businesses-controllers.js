@@ -104,7 +104,7 @@ const createBusiness = async (req, res, next) => {
   res.status(201).json({ business: createdBusiness });
 };
 
-const updateBusiness = (req, res, next) => {
+const updateBusiness = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     console.log(errors);
@@ -113,16 +113,26 @@ const updateBusiness = (req, res, next) => {
 
   const { name, description } = req.body;
   const businessId = req.params.id;
-  const updatedBusiness = {
-    ...businesses_data.find((b) => b.id === businessId)
-  };
-  const businessIndex = businesses_data.findIndex((b) => b.id === businessId);
-  updatedBusiness.name = name;
-  updatedBusiness.description = description;
 
-  businesses_data[businessIndex] = updatedBusiness;
+  let business;
 
-  res.status(200).json({ business: updatedBusiness });
+  try {
+    business = await Business.findById(businessId);
+  } catch (err) {
+    const error = new HttpError("Cannot find business with that id", 500);
+    return next(error);
+  }
+
+  business.name = name;
+  business.description = description;
+
+  try {
+    await business.save();
+  } catch (err) {
+    const error = new HttpError("Could not update business", 500);
+    return next(error);
+  }
+  res.status(200).json({ business: business.toObject({ getters: true }) });
 };
 
 const deleteBusiness = (req, res, next) => {
