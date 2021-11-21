@@ -41,18 +41,30 @@ const getBusinessById = async (req, res, next) => {
   res.json({ business: business.toObject({ getters: true }) });
 };
 
-const getBusinessesByUserId = (req, res, next) => {
+const getBusinessesByUserId = async (req, res, next) => {
   const userId = req.params.uid;
 
-  const businesses = businesses_data.filter((b) => b.creator === userId);
+  let businesses;
+  try {
+    businesses = await Business.find({ creator: userId });
+  } catch (err) {
+    const error = new HttpError(
+      "Could not find a business associated with that user Id",
+      500
+    );
+    return next(error);
+  }
 
   if (!businesses || businesses.length === 0) {
-    throw new HttpError(
+    const error = new HttpError(
       "Could not find any businesses for the provided user id.",
       404
     );
+    return next(error);
   }
-  res.json({ businesses });
+  res.json({
+    businesses: businesses.map((b) => b.toObject({ getters: true }))
+  });
 };
 
 const createBusiness = async (req, res, next) => {
