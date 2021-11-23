@@ -32,7 +32,7 @@ const signup = async (req, res, next) => {
     return next(new HttpError("Invalid input", 422));
   }
 
-  const { name, email, password, businesses } = req.body;
+  const { name, email, password } = req.body;
 
   let existingUser;
   try {
@@ -56,7 +56,7 @@ const signup = async (req, res, next) => {
     image:
       "https://i2-prod.ok.co.uk/incoming/article23299695.ece/ALTERNATES/s1200c/4_GettyImages-1228924141.jpg",
     password,
-    businesses
+    businesses: []
   });
 
   try {
