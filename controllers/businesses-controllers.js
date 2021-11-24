@@ -4,23 +4,9 @@ const { validationResult } = require("express-validator");
 const HttpError = require("../models/http-error");
 const getCoordinatesFromAddress = require("../util/location");
 const Business = require("../models/business");
-
-let businesses_data = [
-  {
-    id: "1",
-    name: "Pinellas Ale House",
-    description: "bar",
-    address: "1962 1st Avenue S St. Petersburg, FL 33712",
-    creator: "2"
-  },
-  {
-    id: "2",
-    name: "Three Daughters Brewing",
-    description: "bar",
-    address: "222 22nd Street South, St. Petersburg, FL 33712",
-    creator: "2"
-  }
-];
+const User = require("../models/user");
+const mongoose = require("mongoose");
+const mongooseUniqueValidator = require("mongoose-unique-validator");
 
 const getBusinessById = async (req, res, next) => {
   const businessId = req.params.id;
@@ -94,8 +80,29 @@ const createBusiness = async (req, res, next) => {
     creator
   });
 
+  let user;
+
   try {
-    await createdBusiness.save();
+    user = await User.findById(creator);
+  } catch (err) {
+    const error = new HttpError("Creating business failed", 500);
+    return next(error);
+  }
+
+  if (!user) {
+    const error = new HttpError("Could not find user id in the databse", 404);
+    return next(error);
+  }
+
+  console.log(user);
+
+  try {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    await createdBusiness.save({ session: session });
+    user.businesses.push(createdBusiness);
+    await user.save({ session: session });
+    await session.commitTransaction();
   } catch (err) {
     const error = new HttpError("Creating Business Failed", 500);
     return next(error);

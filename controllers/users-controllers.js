@@ -4,15 +4,6 @@ const { validationResult } = require("express-validator");
 const HttpError = require("../models/http-error");
 const User = require("../models/user");
 
-const users = [
-  {
-    id: "1",
-    name: "Todd",
-    email: "todd@todd.com",
-    password: "123456"
-  }
-];
-
 const getUsers = async (req, res, next) => {
   // sends back all users
   let users;
