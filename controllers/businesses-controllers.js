@@ -7,6 +7,7 @@ const Business = require("../models/business");
 const User = require("../models/user");
 const mongoose = require("mongoose");
 const mongooseUniqueValidator = require("mongoose-unique-validator");
+const user = require("../models/user");
 
 const getBusinessById = async (req, res, next) => {
   const businessId = req.params.id;
@@ -148,14 +149,24 @@ const deleteBusiness = async (req, res, next) => {
   let business;
 
   try {
-    business = await Business.findById(businessId);
+    business = await Business.findById(businessId).populate("creator");
   } catch (err) {
     const error = new HttpError("Cannot find business with that id", 500);
     return next(error);
   }
 
+  if (!business) {
+    const error = new HttpError("Could not find Business with that id", 404);
+    return next(error);
+  }
+
   try {
-    await business.remove();
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    await business.remove({ session: session });
+    business.creator.businesses.pull(business);
+    await business.creator.save({ session: session });
+    await session.commitTransaction();
   } catch (err) {
     const error = new HttpError("Could not remove business", 500);
     return next(error);
