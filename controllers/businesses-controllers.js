@@ -1,13 +1,10 @@
-const { v4: uuid } = require("uuid");
 const { validationResult } = require("express-validator");
+const mongoose = require("mongoose");
 
 const HttpError = require("../models/http-error");
 const getCoordinatesFromAddress = require("../util/location");
 const Business = require("../models/business");
 const User = require("../models/user");
-const mongoose = require("mongoose");
-const mongooseUniqueValidator = require("mongoose-unique-validator");
-const user = require("../models/user");
 
 const getBusinessById = async (req, res, next) => {
   const businessId = req.params.id;
@@ -44,6 +41,7 @@ const getBusinessesByUserId = async (req, res, next) => {
     return next(error);
   }
 
+  // if(!businesses || businesses.length === 0) {
   if (!userWithBusinesses || userWithBusinesses.businesses.length === 0) {
     const error = new HttpError(
       "Could not find any businesses for the provided user id.",
