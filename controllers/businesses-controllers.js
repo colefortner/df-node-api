@@ -31,9 +31,11 @@ const getBusinessById = async (req, res, next) => {
 const getBusinessesByUserId = async (req, res, next) => {
   const userId = req.params.uid;
 
-  let businesses;
+  // let businesses;
+  let userWithBusinesses;
   try {
-    businesses = await Business.find({ creator: userId });
+    userWithBusinesses = await User.findById(userId).populate("businesses");
+    // businesses = await Business.find({ creator: userId });
   } catch (err) {
     const error = new HttpError(
       "Could not find a business associated with that user Id",
@@ -42,7 +44,7 @@ const getBusinessesByUserId = async (req, res, next) => {
     return next(error);
   }
 
-  if (!businesses || businesses.length === 0) {
+  if (!userWithBusinesses || userWithBusinesses.businesses.length === 0) {
     const error = new HttpError(
       "Could not find any businesses for the provided user id.",
       404
@@ -50,7 +52,9 @@ const getBusinessesByUserId = async (req, res, next) => {
     return next(error);
   }
   res.json({
-    businesses: businesses.map((b) => b.toObject({ getters: true }))
+    businesses: userWithBusinesses.businesses.map((b) =>
+      b.toObject({ getters: true })
+    )
   });
 };
 
