@@ -29,7 +29,7 @@ app.use((error, req, res, next) => {
 
 mongoose
   .connect(
-    "mongodb+srv://colefortner:colefortner@cluster0.psdhm.mongodb.net/dogfriendly?retryWrites=true&w=majority"
+    "mongodb+srv://colefortner:colefortner@cluster0.psdhm.mongodb.net/test?retryWrites=true&w=majority"
   )
   .then(() => {
     app.listen(5050, () => {
