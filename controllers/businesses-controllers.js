@@ -1,3 +1,5 @@
+const fs = require("fs");
+
 const { validationResult } = require("express-validator");
 const mongoose = require("mongoose");
 
@@ -161,6 +163,8 @@ const deleteBusiness = async (req, res, next) => {
     return next(error);
   }
 
+  const imagePath = business.image;
+
   try {
     const session = await mongoose.startSession();
     session.startTransaction();
@@ -172,6 +176,11 @@ const deleteBusiness = async (req, res, next) => {
     const error = new HttpError("Could not remove business", 500);
     return next(error);
   }
+
+  fs.unlink(imagePath, (err) => {
+    console.log(err);
+  });
+
   res.status(200).json({ message: "Deleted business" });
 };
 
