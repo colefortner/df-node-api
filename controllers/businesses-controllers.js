@@ -78,8 +78,7 @@ const createBusiness = async (req, res, next) => {
     description,
     address,
     location: coordinates,
-    image:
-      "https://i2-prod.ok.co.uk/incoming/article23299695.ece/ALTERNATES/s1200c/4_GettyImages-1228924141.jpg",
+    image: req.file.path,
     creator
   });
 
