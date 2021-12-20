@@ -4,12 +4,15 @@ const { check } = require("express-validator");
 
 const businessesControllers = require("../controllers/businesses-controllers");
 const fileUpload = require("../middleware/file-upload");
+const checkAuth = require("../middleware/check-auth");
 
 const router = express.Router();
 
 router.get("/:id", businessesControllers.getBusinessById);
 
 router.get("/user/:uid", businessesControllers.getBusinessesByUserId);
+
+router.use(checkAuth);
 
 router.post(
   "/",
