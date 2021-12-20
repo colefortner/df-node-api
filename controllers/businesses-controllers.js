@@ -101,12 +101,12 @@ const createBusiness = async (req, res, next) => {
   console.log(user);
 
   try {
-    const session = await mongoose.startSession();
-    session.startTransaction();
-    await createdBusiness.save({ session: session });
+    const sess = await mongoose.startSession();
+    sess.startTransaction();
+    await createdBusiness.save({ session: sess });
     user.businesses.push(createdBusiness);
-    await user.save({ session: session });
-    await session.commitTransaction();
+    await user.save({ session: sess });
+    await sess.commitTransaction();
   } catch (err) {
     const error = new HttpError("Creating Business Failed", 500);
     return next(error);
