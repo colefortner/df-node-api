@@ -50,7 +50,7 @@ app.use((error, req, res, next) => {
 
 mongoose
   .connect(
-    "mongodb+srv://colefortner:colefortner@cluster0.psdhm.mongodb.net/farts?retryWrites=true&w=majority"
+    "mongodb+srv://colefortner:colefortner@cluster0.psdhm.mongodb.net/take2?retryWrites=true&w=majority"
   )
   .then(() => {
     app.listen(5050, () => {
