@@ -134,6 +134,14 @@ const updateBusiness = async (req, res, next) => {
     return next(error);
   }
 
+  if (business.creator.toString() !== req.userData.userId) {
+    const error = new HttpError(
+      "You are not allowed to edit this business",
+      401
+    );
+    return next(error);
+  }
+
   business.name = name;
   business.description = description;
 
@@ -160,6 +168,14 @@ const deleteBusiness = async (req, res, next) => {
 
   if (!business) {
     const error = new HttpError("Could not find Business with that id", 404);
+    return next(error);
+  }
+
+  if (business.creator.id !== req.userData.userId) {
+    const error = new HttpError(
+      "You are not allowed to delete this business",
+      401
+    );
     return next(error);
   }
 
